@@ -1,1 +1,5 @@
-rootProject.name = "kotlin-basic-skeleton"
+rootProject.name = "needlehack-post-analyzer"
+
+include("domain")
+include("application")
+include("infrastructure")

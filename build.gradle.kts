@@ -1,56 +1,55 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.21"
+    id("org.springframework.boot") version "2.6.2"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.10"
+    java
+
     id("com.diffplug.spotless") version "5.7.0"
-    application
 }
 
-group = "com.codely"
-version = "0.0.1-SNAPSHOT"
+group = "com.ivangrod"
+version = "1.0.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
+
+val mainClassName = "com.ivangrod.needlehackpost.infrastructure.NeedlehackPostAnalyzerApplication"
+
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:5.7.0")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-}
-application {
-    mainClass.set("com.codely.demo.CodelyberKt")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "11"
+subprojects {
+
+    apply {
+        plugin("org.jetbrains.kotlin.jvm")
     }
-}
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-spotless {
-    kotlin {
-        ktlint()
-            .userData(
-                mapOf(
-                    "insert_final_newline" to "true"
-                )
-            )
+    dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     }
-    kotlinGradle {
-        ktlint()
-    }
-}
 
-tasks.check {
-    dependsOn(tasks.spotlessCheck)
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "11"
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
